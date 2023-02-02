@@ -1,8 +1,13 @@
 package com.example.api.controllers;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,5 +72,52 @@ public class DocumentController {
         log.debug("Change the Base64 file to create a file from bytes");
         return getDocumentResponse ( documentService.createByteFileFromBase64(requestBody) );
     }   
-    
+
+
+    @GetMapping("/downloadPDF")
+    public ResponseEntity<Void> downloadKubernetesFile() throws IOException {
+        final String filePath = "D:\\files\\1_Intro_to_Kubernetes.pdf";
+        byte[] fileBytes = Files.readAllBytes(Paths.get(filePath)  );
+
+        try( ByteArrayInputStream inputStream = new ByteArrayInputStream( fileBytes ) ) {
+            File destinationFile = new File("test.pdf");
+            try (OutputStream output = new FileOutputStream(destinationFile)) {
+                byte[] buffer = new byte[fileBytes.length];
+                int read;
+                while((read = inputStream.read(buffer)) > -1){
+                    output.write(buffer, 0, read);
+                }
+            }
+        }
+
+        return ResponseEntity.status(200).build();
+    }
+
+
+    @GetMapping("/downloadFromFileSystem")
+    public ResponseEntity<?> downloadImageFromFileSystem() throws IOException {
+        final String filePath = "D:\\files\\1_Intro_to_Kubernetes.pdf";
+        byte[] fileBytes = Files.readAllBytes(Paths.get(filePath)  );
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf("application/pdf"))
+                .body(fileBytes);
+
+    }
+
+    @GetMapping("/downloadBytesInString")
+    public ResponseEntity<String> downloadBytesInString() throws IOException {
+        final String filePath = "D:\\files\\1_Intro_to_Kubernetes.pdf";
+        byte[] fileBytes = Files.readAllBytes(Paths.get(filePath)  );
+        String bytesInString = new String(fileBytes, StandardCharsets.UTF_8 );
+
+        System.out.println( "######## Str length bytes are " + bytesInString.length() );
+        System.out.println( "######## Str bytes are " + bytesInString );
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(bytesInString);
+
+    }
+
+
 }
