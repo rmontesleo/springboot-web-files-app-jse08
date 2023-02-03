@@ -232,33 +232,79 @@ async function clickToChangeBase64ToFile() {
 }
 
 
-async function downloadPdfFile(){
-    
+async function downloadPdfFile(){    
     const URL = `http://localhost:8080/api/document/downloadFromFileSystem`;
-    window.open( URL, "_blank");  
-
-
+    window.open( URL, "_blank"); 
 }
 
-async function clickToOpenKubernetesFile(){
-    const endPoint  = `http://localhost:8080/api/document/downloadBytesInString`;
+function changeUtfToByteArray( utf8String ){
+    const byteArray = [];
+    const size = utf8String.length;
+    for ( let index=0; index < size; index++  ){
+        let charCode = utf8String.charCodeAt(index);
+        if ( charCode < 0x80  ){
+            byteArray.push( charCode );            
+        }else{
+            byteArray.push( 0xc0 | (charCode >> 6), 0x80 | (charCode & 0x3f) );
+        }
+    }
+
+    return byteArray;
+}
+
+
+function arrayBufferToBase64( buffer ) {
+	var binary = '';
+	var bytes = new Uint8Array( buffer );
+	var len = bytes.byteLength;
+	for (var i = 0; i < len; i++) {
+		binary += String.fromCharCode( bytes[ i ] );
+	}
+	return window.btoa( binary );
+}
+
+
+async function clickToOpenUTF8String(){
+    const endPoint  = `http://localhost:8080/api/document/downloadBytesInStringUTF8`;
     const response = await fetch( endPoint );
     const stringInUtf8 = await response.text();
 
     console.log( "byteData length: ", stringInUtf8.length ); 
-   console.log( "byteData", stringInUtf8);
+    console.log( "byteData", stringInUtf8);  
 
+    const stringInBase64 = window.btoa(unescape(encodeURIComponent( stringInUtf8 )));
     
-    
-   
-    const linkSource = `application/pdf;charset=utf-8,${stringInUtf8}`;
+    const linkSource = `data:application/pdf;base64,${stringInBase64}`;
     const downloadLink = document.createElement("a");
-    const fileName = "abc.pdf";
+    const fileName = "utf8.pdf";
     downloadLink.href = linkSource;
     downloadLink.target = "_blank";
     downloadLink.download = fileName;
     downloadLink.click();
-   
+
+    console.log("ending....");
+
+}
+
+
+async function clickToOpenBase64String(){
+    const endPoint  = `http://localhost:8080/api/document/downloadBytesInStringBase64`;
+    const response = await fetch( endPoint );
+    const stringInBase64 = await response.text();
+
+    console.log( "byteData length: ", stringInBase64.length ); 
+    console.log( "byteData", stringInBase64);  
+
+    
+    const linkSource = `data:application/pdf;base64,${stringInBase64}`;
+    const downloadLink = document.createElement("a");
+    const fileName = "base64.pdf";
+    downloadLink.href = linkSource;
+    downloadLink.target = "_blank";
+    downloadLink.download = fileName;
+    downloadLink.click();
+
+    console.log("ending....");
 
 }
 
@@ -286,7 +332,9 @@ function init() {
 
     document.getElementById('downloadKubernetesFile').addEventListener("click", downloadPdfFile);
 
-    document.getElementById('openKubernetesFile').addEventListener("click",  clickToOpenKubernetesFile );
+    document.getElementById('openUTF8File').addEventListener("click",  clickToOpenUTF8String );
+
+    document.getElementById('openBase64File').addEventListener("click",  clickToOpenBase64String );
     
 
 }

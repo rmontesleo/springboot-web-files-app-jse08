@@ -2,6 +2,7 @@
 
 
 ## Java
+- [How to Convert InputStream to Base64 String](https://www.baeldung.com/java-inputstream-to-base64-string)
 - [Java – How to convert File to byte[]](https://mkyong.com/java/how-to-convert-file-into-an-array-of-bytes/)
 - [Guide to Java OutputStream](https://www.baeldung.com/java-outputstream)
 - [FileOutputStream in Java](https://www.geeksforgeeks.org/fileoutputstream-in-java/)
@@ -12,6 +13,7 @@
 - [Spring @Controller Annotation with Example](https://www.geeksforgeeks.org/spring-controller-annotation-with-example/)
 
 ## Web 
+- [](https://www.youtube.com/watch?v=y112ifgOsW0)
 - [Media Types](https://www.iana.org/assignments/media-types/media-types.xhtml)
 - [FileReader.readAsText()](https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsText)
 - [Button disabled Property](https://www.w3schools.com/jsref/prop_pushbutton_disabled.asp)

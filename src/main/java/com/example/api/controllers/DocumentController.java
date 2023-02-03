@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -105,17 +106,25 @@ public class DocumentController {
 
     }
 
-    @GetMapping("/downloadBytesInString")
-    public ResponseEntity<String> downloadBytesInString() throws IOException {
+    @GetMapping("/downloadBytesInStringUTF8")
+    public ResponseEntity<String> downloadBytesInStringUtf8() throws IOException {
         final String filePath = "D:\\files\\1_Intro_to_Kubernetes.pdf";
         byte[] fileBytes = Files.readAllBytes(Paths.get(filePath)  );
-        String bytesInString = new String(fileBytes, StandardCharsets.UTF_8 );
-
-        System.out.println( "######## Str length bytes are " + bytesInString.length() );
-        System.out.println( "######## Str bytes are " + bytesInString );
+        String bytesInStringUtf8 = new String(fileBytes, StandardCharsets.UTF_8 );
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(bytesInString);
+                .body(bytesInStringUtf8);
+
+    }
+
+    @GetMapping("/downloadBytesInStringBase64")
+    public ResponseEntity<String> downloadBytesInStringBase64() throws IOException {
+        final String filePath = "D:\\files\\1_Intro_to_Kubernetes.pdf";
+        byte[] fileBytes = Files.readAllBytes(Paths.get(filePath)  );
+        String bytesInStringBase64 = Base64.getEncoder().encodeToString(fileBytes);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(bytesInStringBase64);
 
     }
 
